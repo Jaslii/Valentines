@@ -1,0 +1,206 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>For Pono 💗</title>
+
+  <!-- iOS Add to Home Screen (no manifest) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="For Pono 💗">
+  <meta name="theme-color" content="#FEDCDB">
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <div class="bokeh" aria-hidden="true">
+    <div class="blob" style="left:-60px; top:120px;"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>
+
+  <div class="app">
+
+    <!-- LOCK SCREEN -->
+    <section class="lockscreen" id="lockscreen">
+      <div class="topPill bubbleSurface">
+        <div class="lockIcon">🔒</div>
+        <div>Enter Passcode</div>
+      </div>
+
+      <div class="lockCenter" id="lockCenter">
+        <div class="lockTitle">For <span class="lockTitle">Pono</span></div>
+        <div class="lockSub">Enter Passcode</div>
+
+        <div class="dots" id="dots"></div>
+        <div class="hint" id="lockHint"></div>
+
+        <div class="keypad" id="keypad"></div>
+      </div>
+
+      <div class="lockBottom">
+        <button id="emergencyBtn" type="button">Emergency</button>
+        <button id="cancelBtn" type="button">Cancel</button>
+      </div>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main" id="main">
+      <div class="topbar">
+        <div class="pill bubbleSurface">💗 For: <span id="toName">Your Person</span></div>
+        <div class="pill bubbleSurface">From: <span id="fromName">You</span></div>
+      </div>
+
+      <!-- HUB -->
+      <section class="page active bubbleSurface" id="hub">
+        <div class="pageHeader">
+          <div class="spacer44"></div>
+          <h1>Happy Valentines Day My Love 💖</h1>
+        </div>
+
+        <p>Choose one !</p>
+
+        <div class="grid">
+          <button class="iconBtn bubbleSurface float1" data-go="photos" type="button">
+            <span class="emoji">📷</span> Photos
+            <div class="mini">tap me</div>
+          </button>
+
+          <button class="iconBtn bubbleSurface float2" data-go="letter" type="button">
+            <span class="emoji">💌</span> Letter
+            <div class="mini">tap me</div>
+          </button>
+
+          <button class="iconBtn bubbleSurface float3" data-go="songs" type="button">
+            <span class="emoji">🎵</span> Songs
+            <div class="mini">drag + tap</div>
+          </button>
+        </div>
+
+        <div class="spacer12"></div>
+
+        <div class="tboxWide bubbleSurface">
+          <div class="tboxTitle">We’ve been together for:</div>
+          <div class="timer">
+            <div class="tbox bubbleSurface"><div class="num" id="d">0</div><div class="lab">Days</div></div>
+            <div class="tbox bubbleSurface"><div class="num" id="h">00</div><div class="lab">Hours</div></div>
+            <div class="tbox bubbleSurface"><div class="num" id="m">00</div><div class="lab">Minutes</div></div>
+            <div class="tbox bubbleSurface"><div class="num" id="s">00</div><div class="lab">Seconds</div></div>
+          </div>
+        </div>
+
+        <div class="note">Tip: Add to Home Screen so it can be an app :3</div>
+      </section>
+
+      <!-- PHOTOS -->
+      <section class="page bubbleSurface" id="photos">
+        <div class="pageHeader">
+          <button class="back bubbleSurface" data-back="hub" type="button" aria-label="Back">
+            <svg class="chevIcon" viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M42 12 L22 32 L42 52" />
+              <path d="M54 12 L34 32 L54 52" />
+            </svg>
+          </button>
+          <h1>Photos of us !</h1>
+        </div>
+
+        <p>Use the arrows to flip through your photos.</p>
+
+        <div class="photoCard">
+  <div class="polaroid">
+    <div class="polaroidFrame">
+      <img id="photo" class="polaroidImg" alt="photo" />
+    </div>
+    <div class="polaroidCaption" id="photoCap"></div>
+  </div>
+
+  <div class="row">
+  </div>
+</div>
+
+        <div class="row">
+          <button class="btn arrow left" id="prevPhoto"></button>
+            </svg>
+          </button>
+
+          <button class="btn arrow right" id="nextPhoto"></button>
+            </svg>
+          </button>
+        </div>
+
+        <div class="note"></div>
+      </section>
+
+      <!-- LETTER -->
+      <section class="page bubbleSurface" id="letter">
+        <div class="pageHeader">
+          <button class="back bubbleSurface" data-back="hub" type="button" aria-label="Back">
+            <svg class="chevIcon" viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M42 12 L22 32 L42 52" />
+              <path d="M54 12 L34 32 L54 52" />
+            </svg>
+          </button>
+          <h1>A letter for you 💌</h1>
+        </div>
+
+        <p>Tap the envelope.</p>
+
+        <div class="envelopeWrap">
+          <div class="envelope bubbleSurface" id="envelope" role="button" tabindex="0" aria-label="Open letter">
+            <div class="envBody"></div>
+            <div class="envTop"></div>
+            <div class="letter"><p id="letterText"></p></div>
+          </div>
+          <div class="note">(Tap again to close)</div>
+        </div>
+      </section>
+
+      <!-- SONGS -->
+      <section class="page bubbleSurface" id="songs">
+        <div class="pageHeader">
+          <button class="back bubbleSurface" data-back="hub" type="button" aria-label="Back">
+            <svg class="chevIcon" viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M42 12 L22 32 L42 52" />
+              <path d="M54 12 L34 32 L54 52" />
+            </svg>
+          </button>
+          <h1>Songs that remind me of you :3</h1>
+        </div>
+
+        <p>Drag bubbles. Tap one to open Apple Music.</p>
+
+        <div class="songsStage bubbleSurface" id="songsStage"></div>
+
+        <div class="note">They bump + bounce like us ong ong 💗</div>
+      </section>
+
+    </main>
+
+<!-- Background music (must be started by user gesture on iPhone) -->
+<audio id="bgMusic" preload="auto" loop>
+  <source src="audio/bg.mp3" type="audio/mpeg">
+</audio>
+
+    <audio id="unlockAudio" preload="auto">
+      <source src="audio/audiounlock.mp3" type="audio/mpeg">
+    </audio>
+
+  <!-- Sounds -->
+<audio id="tapSound" preload="auto">
+  <source src="audio/tap.mp3" type="audio/mpeg">
+</audio>
+
+
+  </div>
+
+  <script src="./app.js"></script>
+  
+
+
+
+
+</body>
+</html>
