@@ -1,0 +1,878 @@
+:root{
+  /* Barbie land palette */
+  --c1:#FAF3EB;
+  --c2:#FEDCDB;
+  --c3:#FEDCD2;
+  --c4:#FB9EBB;
+  --c5:#FFE6EE;
+
+  --ink:#3a2a31;
+  --muted: rgba(58,42,49,.72);
+
+  --glass: rgba(255,255,255,.48);
+  --glass2: rgba(255,255,255,.28);
+  --stroke: rgba(58,42,49,.10);
+
+  --shadow: 0 18px 60px rgba(30,18,24,.18);
+  --shadow2: 0 28px 90px rgba(30,18,24,.22);
+}
+
+*{ box-sizing:border-box; }
+html, body{
+  height:100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body{
+  margin:0;
+  font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--ink);
+  overflow:hidden;
+
+  background:
+    radial-gradient(900px 700px at 50% 18%, var(--c1), rgba(250,243,235,0) 70%),
+    radial-gradient(900px 700px at 20% 40%, var(--c5), rgba(255,230,238,0) 70%),
+    radial-gradient(900px 700px at 80% 55%, var(--c2), rgba(254,220,219,0) 70%),
+    linear-gradient(180deg, var(--c1), var(--c5));
+}
+
+/* subtle blobs */
+.bokeh{
+  position:fixed; inset:0;
+  pointer-events:none;
+  opacity:.45;
+}
+.blob{
+  position:absolute;
+  width:240px; height:240px;
+  border-radius:999px;
+  background: radial-gradient(circle at 30% 30%, rgba(251,158,187,.55), rgba(251,158,187,0));
+  mix-blend-mode:multiply;
+  animation: drift 10s ease-in-out infinite;
+}
+.blob:nth-child(2){
+  width:320px; height:320px;
+  left:65%; top:10%;
+  background: radial-gradient(circle at 30% 30%, rgba(254,220,210,.65), rgba(254,220,210,0));
+  animation-duration: 12s;
+}
+.blob:nth-child(3){
+  width:280px; height:280px;
+  left:10%; top:60%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,230,238,.80), rgba(255,230,238,0));
+  animation-duration: 11s;
+}
+@keyframes drift{
+  0%{ transform: translate(0,0) scale(1); }
+  50%{ transform: translate(18px,-16px) scale(1.03); }
+  100%{ transform: translate(0,0) scale(1); }
+}
+
+.app{
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100dvh; /* dynamic viewport for iPhone */
+
+  overflow: hidden;
+}
+
+
+/* ===== LOCKSCREEN ===== */
+.lockscreen{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding: 26px 18px calc(26px + env(safe-area-inset-bottom));
+  transform: translateY(0);
+  opacity:1;
+  transition: transform .7s cubic-bezier(.2,.9,.2,1), opacity .35s ease;
+  will-change: transform, opacity;
+  z-index:50;
+}
+.lockscreen.unlocked{
+  transform: translateY(-130%);
+  opacity:0;
+  pointer-events:none;
+}
+
+.topPill{
+  position:absolute;
+  top: calc(18px + env(safe-area-inset-top));
+  left:50%;
+  transform: translateX(-50%);
+  width: min(320px, 74vw);
+  height:46px;
+  border-radius:999px;
+  background: rgba(255,255,255,.35);
+  border: 1px solid rgba(58,42,49,.10);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  font-weight:800;
+  color: rgba(58,42,49,.75);
+  letter-spacing:.01em;
+}
+.topPill .lockIcon{
+  width:26px; height:26px;
+  border-radius:10px;
+  background: rgba(58,42,49,.08);
+  display:grid;
+  place-items:center;
+  margin-right:10px;
+  font-size:16px;
+}
+
+.lockCenter{
+  width:min(420px, 92vw);
+  text-align:center;
+  padding-top:44px;
+}
+
+.lockTitle{
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 6vw, 40px);
+  font-weight:500;
+  letter-spacing:-.02em;
+  margin:0 0 18px;
+  color: rgba(58,42,49,.72);
+}
+.landItalic{ font-style: italic; font-weight: 400; }
+
+.lockSub{
+  font-size:20px;
+  font-weight:700;
+  color: rgba(58,42,49,.70);
+  margin-top:-10px;
+}
+
+.dots{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  margin:20px 0 14px;
+}
+.dot{
+  width:14px; height:14px;
+  border-radius:999px;
+  border:2px solid rgba(58,42,49,.35);
+  background:transparent;
+}
+.dot.filled{
+  background: rgba(58,42,49,.45);
+  border-color: rgba(58,42,49,.45);
+}
+
+.hint{
+  min-height:18px;
+  font-size:13px;
+  font-weight:900;
+  color: rgba(190,60,110,.85);
+  opacity:0;
+  transform: translateY(-4px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.hint.show{ opacity:1; transform: translateY(0); }
+
+.keypad{
+  width: min(360px, 90vw);
+  margin:16px auto 0;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:18px;
+  justify-items:center;
+}
+.key{
+  width:92px; height:92px;
+  border-radius:999px;
+  background: rgba(255,255,255,.40);
+  border: 1px solid rgba(58,42,49,.10);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 36px rgba(30,18,24,.12), inset 0 1px 0 rgba(255,255,255,.55);
+  color: rgba(58,42,49,.78);
+  font-weight:900;
+  font-size:34px;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+  position:relative;
+}
+.key .letters{
+  position:absolute;
+  bottom:18px;
+  font-size:12px;
+  letter-spacing:.18em;
+  opacity:.75;
+  font-weight:900;
+  color: rgba(58,42,49,.62);
+}
+.key:active{ transform: scale(.98); filter: brightness(.98); }
+
+.key.dark{
+  background: rgba(58,42,49,.18);
+  color: rgba(255,255,255,.88);
+  border-color: rgba(58,42,49,.18);
+}
+.key.dark .letters{ display:none; }
+
+.lockBottom{
+  position:absolute;
+  left:0; right:0;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  padding:0 28px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:900;
+  color: rgba(58,42,49,.62);
+}
+.lockBottom button{
+  border:0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes shake {
+  0%{ transform: translateX(0); }
+  20%{ transform: translateX(-10px); }
+  40%{ transform: translateX(10px); }
+  60%{ transform: translateX(-8px); }
+  80%{ transform: translateX(8px); }
+  100%{ transform: translateX(0); }
+}
+.shake{ animation: shake .35s ease; }
+
+/* ===== MAIN ===== */
+.main{
+  position: absolute;
+  inset: 0;
+
+  padding:
+    env(safe-area-inset-top)
+    16px
+    env(safe-area-inset-bottom);
+
+  display: none;
+  overflow: hidden;
+}
+
+.main.show{ display:block; }
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.pill{
+  padding:10px 12px;
+  border-radius:999px;
+  background: rgba(255,255,255,.42);
+  border: 1px solid rgba(58,42,49,.10);
+  backdrop-filter: blur(14px);
+  font-weight:900;
+  font-size:12px;
+  color: rgba(58,42,49,.75);
+  max-width:48%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  box-shadow: var(--shadow);
+}
+
+.page{
+  position:absolute;
+  inset: 70px 16px 18px 16px;
+  border-radius:28px;
+  background: rgba(255,255,255,.44);
+  border: 1px solid rgba(58,42,49,.10);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow2);
+  padding:16px;
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
+  display:none;
+}
+.page.active{ display:block; }
+
+.pageHeader{
+  display: grid;
+  grid-template-columns: 40px 1fr 40px; /* back | title | spacer */
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* Center the title */
+.pageHeader h1{
+  text-align: center;
+  justify-self: center;
+  margin: 0;
+}
+
+.back{
+  width:38px; height:38px;
+  border-radius:12px;
+  border: 1px solid rgba(58,42,49,.10);
+  background: rgba(255,255,255,.55);
+  color: rgba(58,42,49,.72);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 12px 30px rgba(30,18,24,.10);
+  font-weight:900;
+  /* ===== Pink chevron arrows (small) ===== */
+.chevIcon{
+  width: 18px;
+  height: 18px;
+  display: block;
+  stroke: var(--c4);          /* Barbie pink */
+  stroke-width: 6;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chevIcon.flip{
+  transform: scaleX(-1);
+}
+
+/* Make the arrow buttons NOT feel huge */
+.back,
+.iconBtnSmall{
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+}
+
+}
+.back:active{ transform: scale(.99); }
+
+h1{
+  margin:0;
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-size:22px;
+  letter-spacing:-.01em;
+  color: rgba(58,42,49,.78);
+}
+p{
+  margin:8px 0 12px;
+  color: rgba(58,42,49,.64);
+  line-height:1.35;
+  font-weight:700;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;
+  margin-top:12px;
+}
+.iconBtn{
+  border: 1px solid rgba(58,42,49,.10);
+  background: rgba(255,255,255,.55);
+  border-radius:22px;
+  padding:14px 8px;
+  text-align:center;
+  font-weight:900;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .12s ease;
+  color: rgba(58,42,49,.78);
+  box-shadow: 0 14px 35px rgba(30,18,24,.10);
+}
+.iconBtn:active{ transform: scale(.99); }
+.emoji{ font-size:30px; display:block; margin-bottom:8px; }
+.mini{ font-size:11px; opacity:.72; font-weight:900; margin-top:6px; }
+
+@keyframes floaty {
+  0%{ transform: translateY(0); }
+  50%{ transform: translateY(-4px); }
+  100%{ transform: translateY(0); }
+}
+.float1{ animation: floaty 3.8s ease-in-out infinite; }
+.float2{ animation: floaty 4.4s ease-in-out infinite; }
+.float3{ animation: floaty 4.0s ease-in-out infinite; }
+
+.timer{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:10px;
+  margin-top:10px;
+}
+
+.tbox{
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(58,42,49,.10);
+  border-radius:18px;
+  padding:12px 8px;
+  text-align:center;
+  box-shadow: 0 12px 30px rgba(30,18,24,.10);
+}
+.tboxWide{ border-radius:22px; }
+.tboxTitle{
+  font-weight:900;
+  font-size:14px;
+  color: rgba(58,42,49,.70);
+}
+.num{ font-size:22px; font-weight:900; color: rgba(58,42,49,.78); }
+.lab{ font-size:11px; opacity:.72; font-weight:900; letter-spacing:.02em; color: rgba(58,42,49,.62); }
+
+.note{
+  margin-top:10px;
+  font-size:12px;
+  font-weight:900;
+  color: rgba(58,42,49,.60);
+}
+
+/* spacers */
+.spacer14{ height:14px; }
+.spacer38{ width:38px; }
+
+/* photos */
+.photoCard{
+  background: rgba(255,255,255,.40);
+  border: 1px solid rgba(58,42,49,.10);
+  border-radius: 22px;
+  padding: 14px;
+  box-shadow: 0 16px 44px rgba(30,18,24,.12);
+}
+
+.polaroid{
+  position: relative;
+
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f9f6f5 100%);
+
+  border-radius: 22px;
+  padding: 16px 16px 24px;
+
+  border: 1px solid rgba(0,0,0,0.04);
+
+  box-shadow:
+    0 18px 50px rgba(30,18,24,.12),
+    inset 0 1px 0 rgba(255,255,255,.9);
+
+  overflow: hidden;
+}
+.polaroid::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
+
+  background-size: 3px 3px;
+
+  opacity: 0.4;
+
+  pointer-events: none;
+}
+
+
+/* The “photo window” stays the same size always */
+.polaroidFrame{
+  width: 100%;
+  aspect-ratio: 3 / 4;         /* change to 4/5 or 1/1 if you want */
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(250,243,235,0.9);
+  border: 1px solid rgba(58,42,49,.08);
+  display: grid;
+  place-items: center;
+  .polaroidFrame{
+  position: relative;
+  overflow: hidden;
+
+  box-shadow:
+    inset 0 6px 12px rgba(0,0,0,0.05),
+    inset 0 -6px 12px rgba(0,0,0,0.04);
+}
+
+}
+
+/* Makes ALL images fill the window consistently */
+.polaroidImg{
+  width: 100%;
+  height: 100%;
+
+  object-fit: scale-down;
+  object-position: center;
+
+  background: #fff;
+  padding: 6px;
+
+  display: block;
+
+  image-rendering: auto;
+  -webkit-optimize-contrast: true;
+}
+
+
+/* Caption centered like Polaroid handwriting */
+.polaroidCaption{
+  margin-top: 14px;
+  text-align: center;
+
+  font-weight: 700;
+  font-size: 15px;
+
+  color: rgba(58,42,49,.78);
+
+  letter-spacing: .02em;
+
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+
+/* Keep arrows row spacing nice */
+.row{
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.row .btn{
+  flex: 1;
+  height: 72px;
+}
+/* letter */
+.envelopeWrap{ display:grid; place-items:center; margin-top:8px; }
+.envelope{
+  width: min(320px, 86vw);
+  height: 190px;
+  position:relative;
+  border-radius:22px;
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(58,42,49,.10);
+  box-shadow: 0 22px 64px rgba(30,18,24,.16);
+  overflow:hidden;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.envTop{
+  position:absolute; left:0; right:0; top:0;
+  height:100%;
+  background: linear-gradient(135deg, rgba(251,158,187,.22), rgba(255,230,238,.12));
+  clip-path: polygon(0 0, 100% 0, 50% 56%);
+  transform-origin: top;
+  transition: transform .55s cubic-bezier(.2,.9,.2,1);
+}
+.envBody{
+  position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(254,220,219,.55), rgba(255,230,238,.30));
+}
+.letter{
+  position:absolute;
+  left:16px; right:16px; bottom:14px;
+  height:0;
+  border-radius:16px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(58,42,49,.10);
+  overflow:hidden;
+  transition: height .6s cubic-bezier(.2,.9,.2,1);
+  padding: 0 14px;
+  color: rgba(58,42,49,.86);
+}
+.letter p{ font-size:13px; margin:12px 0; line-height:1.35; font-weight:700; }
+.envelope.open .envTop{ transform: rotateX(180deg); }
+.envelope.open .letter{ height: 150px; padding: 10px 14px; }
+
+/* songs */
+.songsStage{
+  position: relative;
+  width: 100%;
+  height: clamp(520px, 62vh, 760px);   /* ← more room */
+  border-radius: 24px;
+  background: rgba(255,255,255,.40);
+  border: 1px solid rgba(58,42,49,.10);
+  overflow: hidden;
+  box-shadow: 0 18px 55px rgba(30,18,24,.14);
+}
+
+.songBubble{
+  position:absolute;
+  width: 210px;
+  min-height: 58px;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,.25),
+    rgba(255,255,255,.35)
+  );
+  border: 1px solid rgba(251,158,187,.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 28px rgba(251,158,187,.18);
+  inset: 0 1px 0 rgba(255,255,255,.4);
+  display:flex;
+  gap:10px;
+  padding: 10px;
+  align-items:center;
+  cursor: grab;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  color: rgba(58,42,49,.78);
+}
+.songBubble:active{ cursor: grabbing; transform: scale(.99); }
+.songArt{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  overflow:hidden;
+  border: 1px solid rgba(58,42,49,.10);
+  background: rgba(255,255,255,.65);
+  flex: 0 0 auto;
+}
+.songArt img{ width:100%; height:100%; object-fit: cover; display:block; }
+.songMeta{ min-width:0; }
+.songTitle{
+  font-weight: 900;
+  font-size: 13px;
+  line-height:1.1;
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
+.songArtist{
+  margin-top: 4px;
+  font-weight: 900;
+  font-size: 11px;
+  opacity:.72;
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+
+  
+}
+/* =========================
+   Pink Chevron Arrows
+========================= */
+
+.arrow{
+  position: relative;
+  width: 70px;
+  height: 70px;
+
+  background: rgba(255,255,255,0.7);
+  border-radius: 18px;
+
+  border: 1px solid rgba(251,158,187,0.3);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 10px 25px rgba(251,158,187,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+
+  cursor: pointer;
+}
+
+/* Chevron lines */
+.arrow::before,
+.arrow::after,
+.arrow span{
+  content: "";
+  position: absolute;
+
+  width: 26px;
+  height: 26px;
+
+  border-top: 6px solid #FB9EBB;
+  border-right: 6px solid #FB9EBB;
+
+  border-radius: 2px;
+
+  opacity: 0.85;
+}
+
+/* Three layers = triple arrow */
+.arrow::before{
+  transform: translateX(-10px) rotate(45deg);
+}
+
+.arrow::after{
+  transform: translateX(0px) rotate(45deg);
+}
+
+.arrow span{
+  transform: translateX(10px) rotate(45deg);
+}
+
+/* Right arrow */
+.arrow.right::before,
+.arrow.right::after,
+.arrow.right span{
+  transform: rotate(45deg);
+}
+
+/* Left arrow (mirrored) */
+.arrow.left::before,
+.arrow.left::after,
+.arrow.left span{
+  transform: rotate(225deg);
+}
+
+/* Tap feedback */
+.arrow:active{
+  transform: scale(0.95);
+  box-shadow:
+    0 6px 15px rgba(251,158,187,0.15);
+}
+
+/* ========= NO-SCROLL PHOTOS PAGE (does NOT break navigation) ========= */
+
+/* Keep the default .page display rules working */
+#photos.page{
+  overflow: hidden !important;
+  height: 100%;
+  min-height: 0;
+  /* DO NOT set display here */
+}
+
+/* Only become flex when the page is actually active */
+#photos.page.active{
+  display: flex;              /* overrides .page.active { display:block } */
+  flex-direction: column;
+}
+
+/* header + instruction text stay sized normally */
+#photos .pageHeader,
+#photos > p{
+  flex: 0 0 auto;
+}
+
+/* photo card can shrink */
+#photos .photoCard{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* polaroid takes remaining space */
+#photos .polaroid{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* frame must be allowed to shrink (this prevents overflow scroll) */
+#photos .polaroidFrame{
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto !important;
+  aspect-ratio: auto !important; /* stop forcing a tall box */
+}
+
+/* image fills frame */
+#photos .polaroidImg{
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* or scale-down */
+}
+
+/* caption never expands */
+#photos .polaroidCaption{
+  flex: 0 0 auto;
+  text-align: center;
+  max-height: 42px;
+  overflow: hidden;
+}
+
+/* arrows row stays small */
+#photos .row{
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+#photos .row .btn{
+  height: 56px;
+}
+/* ===== Make room for Safari bottom bar (browser mode) ===== */
+.page{
+  /* existing inset but with extra bottom room */
+  inset: 70px 16px calc(16px + env(safe-area-inset-bottom) + 90px) 16px;
+}
+
+/* When launched from Add to Home Screen, remove the extra padding */
+@media (display-mode: standalone) {
+  .page{
+    inset: 70px 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+  }
+}
+/* ===== iPhone: ensure buttons are above everything ===== */
+#photos .row{
+  position: relative;
+  z-index: 50;
+}
+
+#photos .row .btn{
+  position: relative;
+  z-index: 60;
+  pointer-events: auto;
+}
+
+/* Give the Photos page extra breathing room above Safari bar */
+#photos.page{
+  padding-bottom: calc(16px + env(safe-area-inset-bottom) + 90px);
+}
+
+/* If in Add-to-Home-Screen, reduce the extra */
+@media (display-mode: standalone){
+  #photos.page{
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+}
+/* ===== STOP SONGS PAGE SCROLL ===== */
+#songs.page{
+  overflow: hidden !important;
+}
+
+/* Make the stage fill the remaining space and never scroll */
+#songs .songsStage{
+  height: calc(100% - 130px); /* header + instruction space */
+  overflow: hidden !important;
+  touch-action: none;         /* prevents scroll while dragging bubbles */
+}
+
+/* If your page has a paragraph, keep it from pushing content */
+#songs p{
+  margin-bottom: 10px;
+}
+/* Prevent iOS rubber-band scroll */
+body{
+  position: fixed;
+  width: 100%;
+}
+/* iPhone performance mode */
+@supports (-webkit-touch-callout: none){
+  .page, .pill, .topPill{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
